@@ -17,6 +17,10 @@ export function validate(data: any, schema: ValidationRule, path: string = 'root
     return { valid: false, errors };
   }
 
+  if (schema.enum && !schema.enum.includes(data)) {
+    errors.push({ path, message: `Value must be one of: ${schema.enum.join(', ')}` });
+  }
+
   if (schema.type === 'string') {
     if (schema.minLength !== undefined && data.length < schema.minLength) {
       errors.push({ path, message: `String length must be at least ${schema.minLength}` });

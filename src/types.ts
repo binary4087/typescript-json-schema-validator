@@ -9,6 +9,7 @@ export interface ValidationRule {
   maxLength?: number;
   minimum?: number;
   maximum?: number;
+  enum?: any[];
 }
 
 export interface ValidationError {
