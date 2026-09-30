@@ -12,6 +12,7 @@ export interface ValidationRule {
   enum?: any[];
   minItems?: number;
   maxItems?: number;
+  pattern?: string | RegExp;
 }
 
 export interface ValidationError {

@@ -28,6 +28,12 @@ export function validate(data: any, schema: ValidationRule, path: string = 'root
     if (schema.maxLength !== undefined && data.length > schema.maxLength) {
       errors.push({ path, message: `String length must be at most ${schema.maxLength}` });
     }
+    if (schema.pattern) {
+      const regex = schema.pattern instanceof RegExp ? schema.pattern : new RegExp(schema.pattern);
+      if (!regex.test(data)) {
+        errors.push({ path, message: `String must match pattern ${schema.pattern}` });
+      }
+    }
   } else if (schema.type === 'number') {
     if (schema.minimum !== undefined && data < schema.minimum) {
       errors.push({ path, message: `Value must be at least ${schema.minimum}` });

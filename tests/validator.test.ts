@@ -8,12 +8,13 @@ describe('JSON Schema Validator', () => {
       username: { type: 'string', required: true, minLength: 3 },
       age: { type: 'number', minimum: 18 },
       role: { type: 'string', enum: ['admin', 'user', 'guest'] },
-      tags: { type: 'array', items: { type: 'string' }, minItems: 1, maxItems: 3 }
+      tags: { type: 'array', items: { type: 'string' }, minItems: 1, maxItems: 3 },
+      email: { type: 'string', pattern: /^\S+@\S+\.\S+$/ }
     }
   };
 
   it('should validate a correct object', () => {
-    const data = { username: 'alice', age: 25, role: 'admin', tags: ['ts', 'dev'] };
+    const data = { username: 'alice', age: 25, role: 'admin', tags: ['ts', 'dev'], email: 'alice@example.com' };
     const result = validate(data, userSchema);
     expect(result.valid).toBe(true);
   });
@@ -66,6 +67,15 @@ describe('JSON Schema Validator', () => {
     expect(result.valid).toBe(false);
     if (!result.valid) {
       expect(result.errors.some(e => e.message.includes('at most 3 items'))).toBe(true);
+    }
+  });
+
+  it('should fail when pattern is not matched', () => {
+    const data = { username: 'alice', age: 25, email: 'invalid-email' };
+    const result = validate(data, userSchema);
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors.some(e => e.message.includes('must match pattern'))).toBe(true);
     }
   });
 });
