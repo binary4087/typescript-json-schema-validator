@@ -42,13 +42,21 @@ export function validate(data: any, schema: ValidationRule, path: string = 'root
         errors.push(...result.errors);
       }
     }
-  } else if (schema.type === 'array' && schema.items) {
-    data.forEach((item: any, index: number) => {
-      const result = validate(item, schema.items!, `${path}[${index}]`);
-      if (!result.valid) {
-        errors.push(...result.errors);
-      }
-    });
+  } else if (schema.type === 'array') {
+    if (schema.minItems !== undefined && data.length < schema.minItems) {
+      errors.push({ path, message: `Array must have at least ${schema.minItems} items` });
+    }
+    if (schema.maxItems !== undefined && data.length > schema.maxItems) {
+      errors.push({ path, message: `Array must have at most ${schema.maxItems} items` });
+    }
+    if (schema.items) {
+      data.forEach((item: any, index: number) => {
+        const result = validate(item, schema.items!, `${path}[${index}]`);
+        if (!result.valid) {
+          errors.push(...result.errors);
+        }
+      });
+    }
   }
 
   return errors.length > 0 ? { valid: false, errors } : { valid: true };

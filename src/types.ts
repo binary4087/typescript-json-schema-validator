@@ -10,6 +10,8 @@ export interface ValidationRule {
   minimum?: number;
   maximum?: number;
   enum?: any[];
+  minItems?: number;
+  maxItems?: number;
 }
 
 export interface ValidationError {

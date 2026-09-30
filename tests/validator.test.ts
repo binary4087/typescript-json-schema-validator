@@ -8,7 +8,7 @@ describe('JSON Schema Validator', () => {
       username: { type: 'string', required: true, minLength: 3 },
       age: { type: 'number', minimum: 18 },
       role: { type: 'string', enum: ['admin', 'user', 'guest'] },
-      tags: { type: 'array', items: { type: 'string' } }
+      tags: { type: 'array', items: { type: 'string' }, minItems: 1, maxItems: 3 }
     }
   };
 
@@ -48,6 +48,24 @@ describe('JSON Schema Validator', () => {
     expect(result.valid).toBe(false);
     if (!result.valid) {
       expect(result.errors[0].message).toContain('Value must be one of: admin, user, guest');
+    }
+  });
+
+  it('should fail when array is too short', () => {
+    const data = { username: 'alice', age: 25, tags: [] };
+    const result = validate(data, userSchema);
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors.some(e => e.message.includes('at least 1 items'))).toBe(true);
+    }
+  });
+
+  it('should fail when array is too long', () => {
+    const data = { username: 'alice', age: 25, tags: ['1', '2', '3', '4'] };
+    const result = validate(data, userSchema);
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors.some(e => e.message.includes('at most 3 items'))).toBe(true);
     }
   });
 });
