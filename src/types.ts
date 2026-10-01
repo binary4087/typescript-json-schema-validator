@@ -1,4 +1,4 @@
-export type SchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array';
+export type SchemaType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'any';
 
 export interface ValidationRule {
   type: SchemaType;
@@ -16,6 +16,7 @@ export interface ValidationRule {
   maxItems?: number;
   uniqueItems?: boolean;
   pattern?: string | RegExp;
+  anyOf?: ValidationRule[];
 }
 
 export interface ValidationError {

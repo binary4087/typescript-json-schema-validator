@@ -126,4 +126,19 @@ describe('JSON Schema Validator', () => {
     expect(validate([{ a: 1 }, { a: 2 }], complexSchema).valid).toBe(true);
     expect(validate([{ a: 1 }, { a: 1 }], complexSchema).valid).toBe(false);
   });
+
+  it('should validate anyOf', () => {
+    const schema: ValidationRule = {
+      type: 'any',
+      anyOf: [
+        { type: 'string', minLength: 5 },
+        { type: 'number', minimum: 10 }
+      ]
+    };
+    expect(validate('hello', schema).valid).toBe(true);
+    expect(validate(15, schema).valid).toBe(true);
+    expect(validate('hi', schema).valid).toBe(false);
+    expect(validate(5, schema).valid).toBe(false);
+    expect(validate(true, schema).valid).toBe(false);
+  });
 });

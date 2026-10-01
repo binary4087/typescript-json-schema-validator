@@ -10,6 +10,23 @@ export function validate(data: any, schema: ValidationRule, path: string = 'root
     return errors.length > 0 ? { valid: false, errors } : { valid: true };
   }
 
+  if (schema.anyOf) {
+    const results = schema.anyOf.map(s => validate(data, s, path));
+    if (results.some(r => r.valid)) {
+      return { valid: true };
+    }
+    
+    const allErrors = results.flatMap(r => r.valid ? [] : r.errors);
+    return {
+      valid: false,
+      errors: [{ path, message: `Value does not match any of the schemas in anyOf` }]
+    };
+  }
+
+  if (schema.type === 'any') {
+    return { valid: true };
+  }
+
   const actualType = Array.isArray(data) ? 'array' : typeof data;
 
   if (actualType !== schema.type) {
