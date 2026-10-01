@@ -78,4 +78,14 @@ describe('JSON Schema Validator', () => {
       expect(result.errors.some(e => e.message.includes('must match pattern'))).toBe(true);
     }
   });
+
+  it('should validate multipleOf for numbers', () => {
+    const schema: ValidationRule = { type: 'number', multipleOf: 5 };
+    expect(validate(10, schema).valid).toBe(true);
+    expect(validate(12, schema).valid).toBe(false);
+    const result = validate(12, schema);
+    if (!result.valid) {
+      expect(result.errors[0].message).toBe('Value must be a multiple of 5');
+    }
+  });
 });

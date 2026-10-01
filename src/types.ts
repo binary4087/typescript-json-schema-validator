@@ -9,6 +9,7 @@ export interface ValidationRule {
   maxLength?: number;
   minimum?: number;
   maximum?: number;
+  multipleOf?: number;
   enum?: any[];
   minItems?: number;
   maxItems?: number;

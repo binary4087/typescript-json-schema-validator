@@ -41,6 +41,9 @@ export function validate(data: any, schema: ValidationRule, path: string = 'root
     if (schema.maximum !== undefined && data > schema.maximum) {
       errors.push({ path, message: `Value must be at most ${schema.maximum}` });
     }
+    if (schema.multipleOf !== undefined && data % schema.multipleOf !== 0) {
+      errors.push({ path, message: `Value must be a multiple of ${schema.multipleOf}` });
+    }
   } else if (schema.type === 'object' && schema.properties) {
     for (const key in schema.properties) {
       const result = validate(data[key], schema.properties[key], `${path}.${key}`);
