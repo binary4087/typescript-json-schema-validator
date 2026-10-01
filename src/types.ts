@@ -4,6 +4,7 @@ export interface ValidationRule {
   type: SchemaType;
   required?: boolean;
   properties?: Record<string, ValidationRule>;
+  additionalProperties?: boolean | ValidationRule;
   items?: ValidationRule;
   minLength?: number;
   maxLength?: number;

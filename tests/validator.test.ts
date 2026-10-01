@@ -88,4 +88,32 @@ describe('JSON Schema Validator', () => {
       expect(result.errors[0].message).toBe('Value must be a multiple of 5');
     }
   });
+
+  it('should fail when additional properties are present and additionalProperties is false', () => {
+    const schema: ValidationRule = {
+      type: 'object',
+      properties: { name: { type: 'string' } },
+      additionalProperties: false
+    };
+    const data = { name: 'Alice', age: 30 };
+    const result = validate(data, schema);
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors[0].message).toBe('Additional property age is not allowed');
+    }
+  });
+
+  it('should validate additional properties when additionalProperties is a schema', () => {
+    const schema: ValidationRule = {
+      type: 'object',
+      properties: { name: { type: 'string' } },
+      additionalProperties: { type: 'number' }
+    };
+    expect(validate({ name: 'Alice', age: 30 }, schema).valid).toBe(true);
+    const result = validate({ name: 'Alice', age: '30' }, schema);
+    expect(result.valid).toBe(false);
+    if (!result.valid) {
+      expect(result.errors[0].message).toContain('Expected type number');
+    }
+  });
 });

@@ -44,11 +44,32 @@ export function validate(data: any, schema: ValidationRule, path: string = 'root
     if (schema.multipleOf !== undefined && data % schema.multipleOf !== 0) {
       errors.push({ path, message: `Value must be a multiple of ${schema.multipleOf}` });
     }
-  } else if (schema.type === 'object' && schema.properties) {
-    for (const key in schema.properties) {
-      const result = validate(data[key], schema.properties[key], `${path}.${key}`);
-      if (!result.valid) {
-        errors.push(...result.errors);
+  } else if (schema.type === 'object') {
+    if (schema.properties) {
+      for (const key in schema.properties) {
+        const result = validate(data[key], schema.properties[key], `${path}.${key}`);
+        if (!result.valid) {
+          errors.push(...result.errors);
+        }
+      }
+    }
+
+    if (schema.additionalProperties === false) {
+      const allowedKeys = schema.properties ? Object.keys(schema.properties) : [];
+      for (const key in data) {
+        if (!allowedKeys.includes(key)) {
+          errors.push({ path: `${path}.${key}`, message: `Additional property ${key} is not allowed` });
+        }
+      }
+    } else if (typeof schema.additionalProperties === 'object') {
+      const allowedKeys = schema.properties ? Object.keys(schema.properties) : [];
+      for (const key in data) {
+        if (!allowedKeys.includes(key)) {
+          const result = validate(data[key], schema.additionalProperties, `${path}.${key}`);
+          if (!result.valid) {
+            errors.push(...result.errors);
+          }
+        }
       }
     }
   } else if (schema.type === 'array') {
