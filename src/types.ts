@@ -17,6 +17,7 @@ export interface ValidationRule {
   uniqueItems?: boolean;
   pattern?: string | RegExp;
   anyOf?: ValidationRule[];
+  oneOf?: ValidationRule[];
 }
 
 export interface ValidationError {

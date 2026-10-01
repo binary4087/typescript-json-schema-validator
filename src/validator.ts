@@ -16,10 +16,22 @@ export function validate(data: any, schema: ValidationRule, path: string = 'root
       return { valid: true };
     }
     
-    const allErrors = results.flatMap(r => r.valid ? [] : r.errors);
     return {
       valid: false,
       errors: [{ path, message: `Value does not match any of the schemas in anyOf` }]
+    };
+  }
+
+  if (schema.oneOf) {
+    const results = schema.oneOf.map(s => validate(data, s, path));
+    const validCount = results.filter(r => r.valid).length;
+    if (validCount === 1) {
+      return { valid: true };
+    }
+    
+    return {
+      valid: false,
+      errors: [{ path, message: `Value must match exactly one schema in oneOf (matched ${validCount})` }]
     };
   }
 
