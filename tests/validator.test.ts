@@ -116,4 +116,14 @@ describe('JSON Schema Validator', () => {
       expect(result.errors[0].message).toContain('Expected type number');
     }
   });
+
+  it('should validate uniqueItems for arrays', () => {
+    const schema: ValidationRule = { type: 'array', uniqueItems: true };
+    expect(validate([1, 2, 3], schema).valid).toBe(true);
+    expect(validate([1, 2, 1], schema).valid).toBe(false);
+    
+    const complexSchema: ValidationRule = { type: 'array', uniqueItems: true, items: { type: 'object' } };
+    expect(validate([{ a: 1 }, { a: 2 }], complexSchema).valid).toBe(true);
+    expect(validate([{ a: 1 }, { a: 1 }], complexSchema).valid).toBe(false);
+  });
 });

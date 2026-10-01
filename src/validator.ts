@@ -79,6 +79,21 @@ export function validate(data: any, schema: ValidationRule, path: string = 'root
     if (schema.maxItems !== undefined && data.length > schema.maxItems) {
       errors.push({ path, message: `Array must have at most ${schema.maxItems} items` });
     }
+    if (schema.uniqueItems === true) {
+      const seen = new Set();
+      let hasDuplicates = false;
+      for (const item of data) {
+        const serialized = typeof item === 'object' && item !== null ? JSON.stringify(item) : item;
+        if (seen.has(serialized)) {
+          hasDuplicates = true;
+          break;
+        }
+        seen.add(serialized);
+      }
+      if (hasDuplicates) {
+        errors.push({ path, message: 'Array items must be unique' });
+      }
+    }
     if (schema.items) {
       data.forEach((item: any, index: number) => {
         const result = validate(item, schema.items!, `${path}[${index}]`);

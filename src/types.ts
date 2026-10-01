@@ -14,6 +14,7 @@ export interface ValidationRule {
   enum?: any[];
   minItems?: number;
   maxItems?: number;
+  uniqueItems?: boolean;
   pattern?: string | RegExp;
 }
 
